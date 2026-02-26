@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: test-task-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-test_db}
+      POSTGRES_USER: ${POSTGRES_USER:-test_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-test_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  app:
+    build: .
+    container_name: test-task-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-test_db}
+      POSTGRES_USER: ${POSTGRES_USER:-test_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-test_password}
+      LOGGER_LVL: ${LOGGER_LVL:-info}
+      SECRET_KEY: ${SECRET_KEY:-secret}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      TOKEN_EXPIRE_SECONDS: ${TOKEN_EXPIRE_SECONDS:-1200}
+      API_KEY: ${API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  postgres_data:
