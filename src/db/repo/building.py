@@ -25,12 +25,9 @@ class BuildingRepo(BaseRepo[Building]):
         """Здания с координатами в радиусе radius_km от точки (lat, lon). Формула Хаверсина."""
         dlat_rad = func.radians((Building.latitude - lat) / 2)
         dlon_rad = func.radians((Building.longitude - lon) / 2)
-        a = (
-            func.power(func.sin(dlat_rad), 2)
-            + func.cos(func.radians(lat))
-            * func.cos(func.radians(Building.latitude))
-            * func.power(func.sin(dlon_rad), 2)
-        )
+        a = func.power(func.sin(dlat_rad), 2) + func.cos(func.radians(lat)) * func.cos(
+            func.radians(Building.latitude)
+        ) * func.power(func.sin(dlon_rad), 2)
         dist_km = 6371.0 * 2 * func.asin(func.sqrt(a))
         stmt = (
             select(Building)

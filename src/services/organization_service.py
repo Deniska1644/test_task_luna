@@ -51,7 +51,9 @@ class OrganizationService(ActivityTreeMixin):
             raise
         except Exception as e:
             logger.exception("list_organizations_by_activity failed: %s", e)
-            raise InternalError("list_organizations_by_activity failed", details={"error": str(e)}) from e
+            raise InternalError(
+                "list_organizations_by_activity failed", details={"error": str(e)}
+            ) from e
 
     async def get_building_with_organizations(
         self, building_id: int, *, limit: int | None = None, offset: int = 0
@@ -72,7 +74,9 @@ class OrganizationService(ActivityTreeMixin):
             raise
         except Exception as e:
             logger.exception("get_building_with_organizations failed: %s", e)
-            raise InternalError("get_building_with_organizations failed", details={"error": str(e)}) from e
+            raise InternalError(
+                "get_building_with_organizations failed", details={"error": str(e)}
+            ) from e
 
     async def get_organization_detail(
         self, organization_id: int
@@ -98,7 +102,9 @@ class OrganizationService(ActivityTreeMixin):
             raise
         except Exception as e:
             logger.exception("get_organization_detail failed: %s", e)
-            raise InternalError("get_organization_detail failed", details={"error": str(e)}) from e
+            raise InternalError(
+                "get_organization_detail failed", details={"error": str(e)}
+            ) from e
 
     async def search_organizations_by_name(
         self, name: str, *, limit: int | None = None
@@ -118,7 +124,9 @@ class OrganizationService(ActivityTreeMixin):
                         id=org.id,
                         name=org.name,
                         phone=org.phone,
-                        buildings=[BuildingDetail.model_validate(b) for b in org.buildings],
+                        buildings=[
+                            BuildingDetail.model_validate(b) for b in org.buildings
+                        ],
                         activities=activities,
                     )
                 )
@@ -127,7 +135,9 @@ class OrganizationService(ActivityTreeMixin):
             raise
         except Exception as e:
             logger.exception("search_organizations_by_name failed: %s", e)
-            raise InternalError("search_organizations_by_name failed", details={"error": str(e)}) from e
+            raise InternalError(
+                "search_organizations_by_name failed", details={"error": str(e)}
+            ) from e
 
     async def list_buildings_and_organizations_in_radius(
         self,
@@ -146,8 +156,8 @@ class OrganizationService(ActivityTreeMixin):
             if not buildings:
                 return []
             building_ids = [b.id for b in buildings]
-            orgs_by_building = await self._org_repo.get_organizations_grouped_by_building(
-                building_ids
+            orgs_by_building = (
+                await self._org_repo.get_organizations_grouped_by_building(building_ids)
             )
             return [
                 BuildingWithOrganizationsResponse(
@@ -163,7 +173,10 @@ class OrganizationService(ActivityTreeMixin):
             raise
         except Exception as e:
             logger.exception("list_buildings_and_organizations_in_radius failed: %s", e)
-            raise InternalError("list_buildings_and_organizations_in_radius failed", details={"error": str(e)}) from e
+            raise InternalError(
+                "list_buildings_and_organizations_in_radius failed",
+                details={"error": str(e)},
+            ) from e
 
     async def list_buildings_and_organizations_in_bbox(
         self,
@@ -183,8 +196,8 @@ class OrganizationService(ActivityTreeMixin):
             if not buildings:
                 return []
             building_ids = [b.id for b in buildings]
-            orgs_by_building = await self._org_repo.get_organizations_grouped_by_building(
-                building_ids
+            orgs_by_building = (
+                await self._org_repo.get_organizations_grouped_by_building(building_ids)
             )
             return [
                 BuildingWithOrganizationsResponse(
@@ -200,4 +213,7 @@ class OrganizationService(ActivityTreeMixin):
             raise
         except Exception as e:
             logger.exception("list_buildings_and_organizations_in_bbox failed: %s", e)
-            raise InternalError("list_buildings_and_organizations_in_bbox failed", details={"error": str(e)}) from e
+            raise InternalError(
+                "list_buildings_and_organizations_in_bbox failed",
+                details={"error": str(e)},
+            ) from e

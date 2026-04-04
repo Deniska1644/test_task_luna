@@ -33,9 +33,7 @@ from db.models import (
 from db.repo.activity import ActivityRepo
 
 ENGINE = create_async_engine(settings.get_url_pg)
-ASYNC_SESSION = sessionmaker(
-    ENGINE, class_=AsyncSession, expire_on_commit=False
-)
+ASYNC_SESSION = sessionmaker(ENGINE, class_=AsyncSession, expire_on_commit=False)
 
 
 def _activity_tree() -> list[tuple[str | None, str]]:
@@ -68,32 +66,58 @@ def _building_rows() -> list[dict]:
         ("Россия", None, "Санкт-Петербург"),
     ]
     streets = [
-        "Ленина", "Мира", "Советская", "Гагарина", "Победы",
-        "Центральная", "Молодёжная", "Садовая", "Лесная", "Речная",
-        "Блюхера", "Красный проспект", "Кирова", "Гоголя",
+        "Ленина",
+        "Мира",
+        "Советская",
+        "Гагарина",
+        "Победы",
+        "Центральная",
+        "Молодёжная",
+        "Садовая",
+        "Лесная",
+        "Речная",
+        "Блюхера",
+        "Красный проспект",
+        "Кирова",
+        "Гоголя",
     ]
     rows = []
     for country, region, city in cities:
         for i, street in enumerate(streets[:10]):
-            rows.append({
-                "country": country,
-                "region": region or "",
-                "city": city,
-                "street": f"ул. {street}",
-                "house_number": f"{random.randint(1, 120)}/{random.randint(1, 5)}",
-                "latitude": round(55.0 + random.uniform(0, 2), 6),
-                "longitude": round(82.0 + random.uniform(0, 4), 6),
-            })
+            rows.append(
+                {
+                    "country": country,
+                    "region": region or "",
+                    "city": city,
+                    "street": f"ул. {street}",
+                    "house_number": f"{random.randint(1, 120)}/{random.randint(1, 5)}",
+                    "latitude": round(55.0 + random.uniform(0, 2), 6),
+                    "longitude": round(82.0 + random.uniform(0, 4), 6),
+                }
+            )
     return rows
 
 
 def _company_names(count: int) -> list[str]:
     """Generate ~count company names."""
     bases = [
-        "Рога и Копыта", "СтройИнвест", "Молоко Сибири", "АвтоМир",
-        "СибирьТорг", "ТехСервис", "Северный ветер", "Альфа",
-        "Бета Плюс", "Гамма", "Дельта Сервис", "Омега", "Агро",
-        "ТрансЛогистик", "МясоПром", "ХлебДар", "Чистый дом",
+        "Рога и Копыта",
+        "СтройИнвест",
+        "Молоко Сибири",
+        "АвтоМир",
+        "СибирьТорг",
+        "ТехСервис",
+        "Северный ветер",
+        "Альфа",
+        "Бета Плюс",
+        "Гамма",
+        "Дельта Сервис",
+        "Омега",
+        "Агро",
+        "ТрансЛогистик",
+        "МясоПром",
+        "ХлебДар",
+        "Чистый дом",
     ]
     forms = ["ООО", "ООО", "АО", "ИП"]
     out = []
@@ -123,7 +147,9 @@ async def _get_leaf_ids(session: AsyncSession) -> list[int]:
         r[0]
         for r in (
             await session.execute(
-                select(ActivityOwnership.owner_id).where(ActivityOwnership.depth == 2).distinct()
+                select(ActivityOwnership.owner_id)
+                .where(ActivityOwnership.depth == 2)
+                .distinct()
             )
         ).all()
     }

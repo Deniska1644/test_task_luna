@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from .base import BaseSchema
 
 
@@ -28,12 +26,12 @@ class BuildingDetail(BaseSchema):
 
     id: int
     country: str
-    region: Optional[str] = None
+    region: str | None = None
     city: str
     street: str
     house_number: str
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+    latitude: float | None = None
+    longitude: float | None = None
 
 
 class BuildingWithOrganizationsResponse(BaseSchema):

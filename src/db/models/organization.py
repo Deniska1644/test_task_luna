@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -17,12 +15,11 @@ class Organization(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     phone: Mapped[str] = mapped_column(String(50), nullable=False)
 
-    buildings: Mapped[List["Building"]] = relationship(
+    buildings: Mapped[list[Building]] = relationship(
         secondary="organization_buildings",
         back_populates="organizations",
     )
-    activities: Mapped[List["Activity"]] = relationship(
+    activities: Mapped[list[Activity]] = relationship(
         secondary="organization_activities",
         back_populates="organizations",
     )
-

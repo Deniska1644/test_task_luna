@@ -21,7 +21,9 @@ class TokenService:
         self.algorithm = algorithm or settings.JWT_ALGORITHM
         self.expire_seconds = expire_seconds or settings.TOKEN_EXPIRE_SECONDS
 
-    def create_token(self, subject: str = "api", extra: dict[str, Any] | None = None) -> str:
+    def create_token(
+        self, subject: str = "api", extra: dict[str, Any] | None = None
+    ) -> str:
         """Создать JWT с истечением через TOKEN_EXPIRE_SECONDS секунд."""
         now = int(time.time())
         payload = {

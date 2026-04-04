@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from db.models import Activity, ActivityOwnership
 from db.repo.base import BaseRepo
 
@@ -22,13 +23,19 @@ class ActivityRepo(BaseRepo[Activity]):
 
     async def get_owned_ids(self, owner_id: int) -> list[int]:
         """Все id активностей, которыми владеет owner_id (сама + потомки), из activity_ownership."""
-        stmt = select(ActivityOwnership.owned_id).where(ActivityOwnership.owner_id == owner_id)
+        stmt = select(ActivityOwnership.owned_id).where(
+            ActivityOwnership.owner_id == owner_id
+        )
         result = await self._session.execute(stmt)
         return [row[0] for row in result.all()]
 
-    async def fill_ownership_after_create(self, activity_id: int, parent_id: int | None) -> None:
+    async def fill_ownership_after_create(
+        self, activity_id: int, parent_id: int | None
+    ) -> None:
         """Добавляет строки владения для новой активности: (id, id, 1) и (owner, id, d+1) для каждого предка."""
-        self._session.add(ActivityOwnership(owner_id=activity_id, owned_id=activity_id, depth=1))
+        self._session.add(
+            ActivityOwnership(owner_id=activity_id, owned_id=activity_id, depth=1)
+        )
         if parent_id is None:
             await self._session.flush()
             return
@@ -38,11 +45,15 @@ class ActivityRepo(BaseRepo[Activity]):
         for row in result.scalars().all():
             if row.depth < 3:
                 self._session.add(
-                    ActivityOwnership(owner_id=row.owner_id, owned_id=activity_id, depth=row.depth + 1)
+                    ActivityOwnership(
+                        owner_id=row.owner_id, owned_id=activity_id, depth=row.depth + 1
+                    )
                 )
         await self._session.flush()
 
-    async def create_activity(self, name: str, parent_id: int | None = None) -> Activity:
+    async def create_activity(
+        self, name: str, parent_id: int | None = None
+    ) -> Activity:
         """Создаёт активность и заполняет activity_ownership (глубина 1–3)."""
         activity = Activity(name=name)
         await self.add(activity)
@@ -56,7 +67,12 @@ class ActivityRepo(BaseRepo[Activity]):
         if not leaf_ids:
             return []
         stmt = (
-            select(ActivityOwnership.owned_id, ActivityOwnership.owner_id, ActivityOwnership.depth, Activity.name)
+            select(
+                ActivityOwnership.owned_id,
+                ActivityOwnership.owner_id,
+                ActivityOwnership.depth,
+                Activity.name,
+            )
             .join(Activity, Activity.id == ActivityOwnership.owner_id)
             .where(ActivityOwnership.owned_id.in_(leaf_ids))
             .order_by(ActivityOwnership.owned_id, ActivityOwnership.depth.desc())

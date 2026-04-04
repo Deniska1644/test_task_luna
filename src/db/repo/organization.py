@@ -52,7 +52,10 @@ class OrganizationRepo(BaseRepo[Organization]):
     ) -> list[Organization]:
         stmt = (
             select(Organization)
-            .join(OrganizationActivity, Organization.id == OrganizationActivity.organization_id)
+            .join(
+                OrganizationActivity,
+                Organization.id == OrganizationActivity.organization_id,
+            )
             .where(OrganizationActivity.activity_id == activity_id)
             .offset(offset)
         )
@@ -73,7 +76,10 @@ class OrganizationRepo(BaseRepo[Organization]):
             return []
         stmt = (
             select(Organization)
-            .join(OrganizationActivity, Organization.id == OrganizationActivity.organization_id)
+            .join(
+                OrganizationActivity,
+                Organization.id == OrganizationActivity.organization_id,
+            )
             .where(OrganizationActivity.activity_id.in_(activity_ids))
             .distinct()
             .offset(offset)
@@ -93,7 +99,10 @@ class OrganizationRepo(BaseRepo[Organization]):
         """Организации, расположенные в указанном здании."""
         stmt = (
             select(Organization)
-            .join(OrganizationBuilding, Organization.id == OrganizationBuilding.organization_id)
+            .join(
+                OrganizationBuilding,
+                Organization.id == OrganizationBuilding.organization_id,
+            )
             .where(OrganizationBuilding.building_id == building_id)
             .distinct()
             .offset(offset)
@@ -115,7 +124,10 @@ class OrganizationRepo(BaseRepo[Organization]):
             return []
         stmt = (
             select(Organization)
-            .join(OrganizationBuilding, Organization.id == OrganizationBuilding.organization_id)
+            .join(
+                OrganizationBuilding,
+                Organization.id == OrganizationBuilding.organization_id,
+            )
             .where(OrganizationBuilding.building_id.in_(building_ids))
             .distinct()
             .offset(offset)

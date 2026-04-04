@@ -2,7 +2,6 @@
 Точка входа FastAPI: создание приложения и запуск uvicorn.
 """
 
-import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request

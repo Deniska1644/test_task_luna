@@ -11,8 +11,12 @@ class ActivityOwnership(Base):
 
     __tablename__ = "activity_ownership"
     __table_args__ = (
-        UniqueConstraint("owner_id", "owned_id", name="uq_activity_ownership_owner_owned"),
-        CheckConstraint("depth >= 1 AND depth <= 3", name="activity_ownership_depth_range"),
+        UniqueConstraint(
+            "owner_id", "owned_id", name="uq_activity_ownership_owner_owned"
+        ),
+        CheckConstraint(
+            "depth >= 1 AND depth <= 3", name="activity_ownership_depth_range"
+        ),
     )
 
     owner_id: Mapped[int] = mapped_column(
@@ -54,4 +58,3 @@ class OrganizationActivity(Base):
         ForeignKey("activities.id", ondelete="CASCADE"),
         primary_key=True,
     )
-
